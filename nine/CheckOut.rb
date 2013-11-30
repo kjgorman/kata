@@ -14,13 +14,18 @@ class CheckOut
 
   def scan item
     @items << item
-    rules = find_applicable_rules
-    rules = rules.sort do | x, y |
-      x.saves(@items, price_of(item)) - y.saves(@items, price_of(item))
-    end
+    rules = prioritise_applicable_rules item
 
     total = 0
     list = @items.clone
+
+    list, total = apply_rules rules, list, total
+    total = apply_standard_pricing list, total, item
+
+    @current_best = total
+  end
+
+  def apply_rules rules, list, total
     while rules.length > 0
       current_rule = rules[0]
       if current_rule.applicable? list then
@@ -30,11 +35,20 @@ class CheckOut
       end
     end
 
+    return list, total
+  end
+
+  def apply_standard_pricing list, total, item
     list.each do | item |
       total = total + price_of(item)
     end
+    total
+  end
 
-    @current_best = total
+  def prioritise_applicable_rules item
+    find_applicable_rules.sort do | x, y |
+      x.saves(@items, price_of(item)) - y.saves(@items, price_of(item))
+    end
   end
 
   def price_of item
