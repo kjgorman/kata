@@ -6,9 +6,7 @@ import PriceRules
 import Test.HUnit
 
 price :: String -> Int
-price items = total $ foldr compute initialCheckOut items
-              where
-                compute = (\c x -> scan c x)
+price items = total $ foldr scan initialCheckOut items
 
 testOverall = TestCase $ do
   assertEqual ""  0 $ price ""
