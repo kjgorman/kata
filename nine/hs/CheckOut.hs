@@ -13,7 +13,7 @@ instance Monad (CheckOut s) where
                      in runCheckOut (k a) c'
 
 get = CheckOut $ \c -> (c, c)
-put c = CheckOut $ \_ -> ((), c)
+put c = CheckOut $ const ((), c)
 modify f = do { x <- get; put (f x) }
 
 initialCheckOut :: CheckOut String Int

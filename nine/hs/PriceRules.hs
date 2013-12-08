@@ -42,21 +42,20 @@ discount' :: Deal -> String -> (Int, String)
 discount' d s = (discounted d, del (key d) (quantity d) s)
   where del _ 0 s = s
         del _ n [] = []
-        del k n (x:[]) = if x == k then [] else x:[]
+        del k n [x] = if x == k then [] else [x]
         del k n (x:y:xs) = if x == k
                            then del k (n-1) (y:xs)
-                           else x:(del k n (y:xs))
+                           else x:del k n (y:xs)
 
 applicable :: Deal -> String -> Bool
 applicable _ [] = False
-applicable d s = and [keyFound d s, quantity d <= (qty d s)]
+applicable d s = keyFound d s && quantity d <= qty d s
                  where
-                   keyFound d s = (key d) `elem` s
-                   qty d s = length $ filter (== (key d)) s
+                   keyFound d s = key d `elem` s
+                   qty d s = length $ filter (== key d) s
 
 value :: String -> Int
-value [] = 0
-value (x:xs) = (first rules x) + value xs
+value = foldr ((+) . first rules) 0
 
 first :: [Rule] -> Char -> Int
 first [] _ = 0
