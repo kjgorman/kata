@@ -19,5 +19,5 @@
    (list
     (create-rule #\D 15 nil)
     (create-rule #\C 20 nil)
-    (create-rule #\B 30 '(create-deal #\B 2 45))
-    (create-rule #\A 50 '(create-deal #\A 3 130))))
+    (create-rule #\B 30 (list (create-deal #\B 2 45)))
+    (create-rule #\A 50 (list (create-deal #\A 3 130)))))
